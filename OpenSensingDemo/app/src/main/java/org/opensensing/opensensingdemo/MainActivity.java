@@ -38,9 +38,13 @@ public class MainActivity extends Activity implements Probe.DataListener{
     private WifiProbe wifiProbe;
     private SimpleLocationProbe locationProbe;
     private CheckBox enabledCheckbox;
-    private Button archiveButton, scanNowButton;
+    private Button archiveButton;
+    private Button scanNowButton;
     private TextView dataCountView;
     private Handler handler;
+
+
+
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -72,12 +76,15 @@ public class MainActivity extends Activity implements Probe.DataListener{
             // Set UI ready to use, by enabling buttons
             enabledCheckbox.setEnabled(true);
             archiveButton.setEnabled(true);
+            scanNowButton.setEnabled(true);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             funfManager = null;
         }
+
+
     };
 
     @Override
@@ -117,6 +124,22 @@ public class MainActivity extends Activity implements Probe.DataListener{
             }
         });
 
+        scanNowButton = (Button) findViewById(R.id.scanNowButton);
+        scanNowButton.setEnabled(false);
+        scanNowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pipeline.isEnabled()) {
+                    // Manually register the pipeline
+                    wifiProbe.registerListener(pipeline);
+                    locationProbe.registerListener(pipeline);
+                } else {
+                    Toast.makeText(getBaseContext(), "Pipeline is not enabled.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
     }
@@ -143,18 +166,16 @@ public class MainActivity extends Activity implements Probe.DataListener{
         return super.onOptionsItemSelected(item);
     }
 
-        private static final String TOTAL_COUNT_SQL = "SELECT count(*) FROM " + NameValueDatabaseHelper.DATA_TABLE.name;
-        /**
-         * Queries the database of the pipeline to determine how many rows of data we have recorded so far.
-         */
-        private void updateScanCount() {
-            // Query the pipeline db for the count of rows in the data table
-            SQLiteDatabase db = pipeline.getDb();
-            Cursor mcursor = db.rawQuery(TOTAL_COUNT_SQL, null);
-            mcursor.moveToFirst();
-            final int count = mcursor.getInt(0);
-            // Update interface on main thread
-            runOnUiThread(new Runnable() {
+    private static final String TOTAL_COUNT_SQL = "SELECT count(*) FROM " + NameValueDatabaseHelper.DATA_TABLE.name;
+
+    private void updateScanCount() {
+        // Query the pipeline db for the count of rows in the data table
+        SQLiteDatabase db = pipeline.getDb();
+        Cursor mcursor = db.rawQuery(TOTAL_COUNT_SQL, null);
+        mcursor.moveToFirst();
+        final int count = mcursor.getInt(0);
+        // Update interface on main thread
+        runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     dataCountView.setText("Data Count: " + count);
@@ -174,4 +195,6 @@ public class MainActivity extends Activity implements Probe.DataListener{
         wifiProbe.registerPassiveListener(this);
         locationProbe.registerPassiveListener(this);
     }
+
+
 }
