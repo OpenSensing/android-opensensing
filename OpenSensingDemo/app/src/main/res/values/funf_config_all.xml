@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+      <string name="default_pipeline">
+        {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
+         "name":"default",
+         "version":1,
+         "data":[
+            "edu.mit.media.funf.probe.builtin.WifiProbe",
+            "edu.mit.media.funf.probe.builtin.LocationProbe",
+            {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe", "@schedule": {"interval": 300, "duration": 10, "strict": false}},
+            "edu.mit.media.funf.probe.builtin.BatteryProbe",
+            {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe", "@schedule": {"interval": 300, "duration": 10, "strict": false}},
+            {"@type": "edu.mit.media.funf.probe.builtin.AccountsProbe", "@schedule": {"interval": 300, "duration": 10, "strict": false}},
+            {"@type": "edu.mit.media.funf.probe.builtin.AndroidInfoProbe", "@schedule": {"interval": 300, "duration": 10, "strict": false}}
+         ]
+        }
+    </string>
+</resources>

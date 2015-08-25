@@ -3,13 +3,12 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="default_pipeline">
+    <string name="test_config">
         {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
-         "name":"default",
+         "name":"test_config",
          "version":1,
          "data":[
-            "edu.mit.media.funf.probe.builtin.WifiProbe",
-            "edu.mit.media.funf.probe.builtin.LocationProbe"
+            {"@type": "edu.mit.media.funf.probe.builtin.HardwareInfoProbe", "@schedule": {"interval": 60, "duration": 10, "strict": false}}
          ]
         }
     </string>
