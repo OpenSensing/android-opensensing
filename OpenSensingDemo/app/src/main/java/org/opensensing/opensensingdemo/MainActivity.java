@@ -2,6 +2,7 @@ package org.opensensing.opensensingdemo;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,8 @@ import org.json.JSONStringer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
@@ -42,153 +46,82 @@ import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
 import edu.mit.media.funf.probe.builtin.WifiProbe;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 
-public class MainActivity extends Activity implements Probe.DataListener{
+public class MainActivity extends Activity implements Observer {
 
-    public static final String PIPELINE_NAME = "default";
+
     public static final String TAG = "OPEN_SENSING_DEMO";
 
-    private FunfManager funfManager;
-    private BasicPipeline pipeline;
-    private WifiProbe wifiProbe;
-    private SimpleLocationProbe locationProbe;
-    private CheckBox enabledCheckbox;
     private Button archiveButton;
-    private Button scanNowButton;
     private Button getInfoButton;
-    private TextView dataCountView;
     private Handler handler;
     private LocalFunfManager localFunfManager;
+    private Switch enabledSwitch;
+    private View.OnClickListener getInfoButtonListener;
+    private CompoundButton.OnCheckedChangeListener enabledSwitchListener;
+    private TextView pipelineInUseTextView;
 
-
-
-    private ServiceConnection funfManagerConn = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            funfManager = ((FunfManager.LocalBinder) service).getManager();
-
-
-
-            Gson gson = funfManager.getGson();
-            wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
-            locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
-            pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-            wifiProbe.registerPassiveListener(MainActivity.this);
-            locationProbe.registerPassiveListener(MainActivity.this);
-
-            // This checkbox enables or disables the pipeline
-            enabledCheckbox.setChecked(pipeline.isEnabled());
-            enabledCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (funfManager != null) {
-                        if (isChecked) {
-                            funfManager.enablePipeline(PIPELINE_NAME);
-
-                            pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-
-
-                            JsonParser parser = new JsonParser();
-                            JsonObject testConfig = parser.parse(getString(R.string.test_config)).getAsJsonObject();
-
-
-
-                            boolean success = funfManager.saveAndReload(PIPELINE_NAME, testConfig);
-                            funfManager.enablePipeline(PIPELINE_NAME);
-
-
-                            Log.i(TAG, testConfig.toString());
-                            Log.i(TAG, ""+success);
-
-
-
-                        } else {
-                            funfManager.disablePipeline(PIPELINE_NAME);
-                        }
-                    }
-                }
-            });
-
-            // Set UI ready to use, by enabling buttons
-            enabledCheckbox.setEnabled(true);
-            archiveButton.setEnabled(true);
-            scanNowButton.setEnabled(true);
-            getInfoButton.setEnabled(true);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            funfManager = null;
-        }
-
-
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Displays the count of rows in the data
-        dataCountView = (TextView) findViewById(R.id.dataCountText);
 
-        localFunfManager = new LocalFunfManager();
+
+        localFunfManager = new LocalFunfManager(this);
+        localFunfManager.addObserver(this);
+
 
         // Used to make interface changes on main thread
         handler = new Handler();
 
-        enabledCheckbox = (CheckBox) findViewById(R.id.enabledCheckbox);
-        enabledCheckbox.setEnabled(false);
-
-        // Runs an archive if pipeline is enabled
         archiveButton = (Button) findViewById(R.id.archiveButton);
-        archiveButton.setEnabled(false);
+        archiveButton.setEnabled(true);
         archiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pipeline.isEnabled()) {
-                    pipeline.onRun(BasicPipeline.ACTION_ARCHIVE, null);
-
-                    // Wait 1 second for archive to finish, then refresh the UI
-                    // (Note: this is kind of a hack since archiving is seamless and there are no messages when it occurs)
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getBaseContext(), "Archived!", Toast.LENGTH_SHORT).show();
-                            updateScanCount();
-                        }
-                    }, 1000L);
-                } else {
-                    Toast.makeText(getBaseContext(), "Pipeline is not enabled.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        scanNowButton = (Button) findViewById(R.id.scanNowButton);
-        scanNowButton.setEnabled(false);
-        scanNowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (pipeline.isEnabled()) {
-                    // Manually register the pipeline
-                    wifiProbe.registerListener(pipeline);
-                    locationProbe.registerListener(pipeline);
-                } else {
-                    Toast.makeText(getBaseContext(), "Pipeline is not enabled.", Toast.LENGTH_SHORT).show();
-                }
+                localFunfManager.archive();
             }
         });
 
 
         getInfoButton = (Button) findViewById(R.id.getInfoButton);
         getInfoButton.setEnabled(false);
-        getInfoButton.setOnClickListener(new View.OnClickListener() {
+        getInfoButtonListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getInfo();
             }
-        });
+        };
+        getInfoButton.setOnClickListener(getInfoButtonListener);
+
+        enabledSwitch = (Switch) findViewById(R.id.enabledSwitch);
+        enabledSwitch.setEnabled(false);
+        enabledSwitchListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) localFunfManager.enable();
+                else localFunfManager.disable();
+            }
+        };
+        enabledSwitch.setOnCheckedChangeListener(enabledSwitchListener);
+
+        pipelineInUseTextView = (TextView) findViewById(R.id.pipelineInUseTextView);
 
         // Bind to the service, to create the connection with FunfManager
-        bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
+        //bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
+        localFunfManager.start();
+
+
+    }
+
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        localFunfManager.destroy();
     }
 
     @Override
@@ -215,74 +148,44 @@ public class MainActivity extends Activity implements Probe.DataListener{
         return super.onOptionsItemSelected(item);
     }
 
-    private static final String TOTAL_COUNT_SQL = "SELECT count(*) FROM " + NameValueDatabaseHelper.DATA_TABLE.name;
-
 
 
     private void getInfo() {
-        getDataInfo();
+        localFunfManager.getInfo();
     }
 
-    private void getDataInfo() {
-        SQLiteDatabase db = pipeline.getDb();
-        Cursor mcursor = db.rawQuery("SELECT name FROM " + NameValueDatabaseHelper.DATA_TABLE.name, null);
-        mcursor.moveToFirst();
+    private void updateUI() {
+        Log.i(TAG, "Update UI here "+localFunfManager.collectionEnabled());
+        enabledSwitch.setEnabled(true);
+        if (localFunfManager.collectionEnabled()) {
 
-        HashMap<String, Integer> dataCount = new HashMap<String, Integer>();
+            enabledSwitch.setOnCheckedChangeListener(null);
+            enabledSwitch.setChecked(true);
+            enabledSwitch.setOnCheckedChangeListener(enabledSwitchListener);
+            enabledSwitch.setText("Collection enabled");
 
-        while (!mcursor.isAfterLast()) {
-            String name = mcursor.getString(0);
-            if (dataCount.containsKey(name)) {
-                dataCount.put(name, dataCount.get(name) +1);
-            }
-            else {
-                dataCount.put(name, 1);
-            }
-            //Log.i(TAG, name);
-            mcursor.moveToNext();
+            getInfoButton.setEnabled(true);
+            archiveButton.setEnabled(true);
+
+            pipelineInUseTextView.setText(localFunfManager.getCurrentPipelineName());
+        }
+        else {
+            enabledSwitch.setOnCheckedChangeListener(null);
+            enabledSwitch.setChecked(false);
+            enabledSwitch.setOnCheckedChangeListener(enabledSwitchListener);
+            enabledSwitch.setText("Collection disabled");
+
+            getInfoButton.setEnabled(false);
+            archiveButton.setEnabled(false);
+
+            pipelineInUseTextView.setText("");
         }
 
-        Log.i(TAG, dataCount.toString());
-    }
-
-    private void getDbInfo() {
-        SQLiteDatabase db = pipeline.getDb();
-        Cursor mcursor = db.rawQuery("PRAGMA table_info("+NameValueDatabaseHelper.DATA_TABLE.name+")", null);
-        mcursor.moveToFirst();
-        while (!mcursor.isAfterLast()) {
-            Log.i(TAG, mcursor.getString(1));
-            mcursor.moveToNext();
-        }
-    }
-
-    private void updateScanCount() {
-        // Query the pipeline db for the count of rows in the data table
-        SQLiteDatabase db = pipeline.getDb();
-        Cursor mcursor = db.rawQuery(TOTAL_COUNT_SQL, null);
-        mcursor.moveToFirst();
-        final int count = mcursor.getInt(0);
-        Log.i(TAG, "rows: " + count);
-        // Update interface on main thread
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                dataCountView.setText("Data Count: " + count);
-            }
-        });
-        }
-
-    @Override
-    public void onDataReceived(IJsonObject iJsonObject, IJsonObject iJsonObject1) {
-        updateScanCount();
     }
 
     @Override
-    public void onDataCompleted(IJsonObject probeConfig, JsonElement checkpoint) {
-        updateScanCount();
-        // Re-register to keep listening after probe completes.
-        wifiProbe.registerPassiveListener(this);
-        locationProbe.registerPassiveListener(this);
+    public void update(Observable observable, Object data) {
+        updateUI();
     }
-
 
 }

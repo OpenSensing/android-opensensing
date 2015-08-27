@@ -25,7 +25,8 @@
         </activity>
 
         <service android:name="edu.mit.media.funf.FunfManager">
-            <meta-data android:name="default" android:value="@string/default_pipeline"/>
+            <meta-data android:name="local_pipeline" android:value="@string/default_pipeline"/>
+            <meta-data android:name="remote_pipeline" android:value="@string/test_config"/>
         </service>
         <receiver android:name="edu.mit.media.funf.Launcher" android:enabled="true">
             <intent-filter>

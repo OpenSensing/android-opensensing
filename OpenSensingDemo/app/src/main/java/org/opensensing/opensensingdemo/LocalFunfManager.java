@@ -1,29 +1,61 @@
 package org.opensensing.opensensingdemo;
 
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Observable;
+
 import edu.mit.media.funf.FunfManager;
+import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.BasicPipeline;
+import edu.mit.media.funf.probe.Probe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
 import edu.mit.media.funf.probe.builtin.WifiProbe;
+import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 
 /**
  * Created by arks on 8/25/15.
  */
-public class LocalFunfManager {
+public class LocalFunfManager extends Observable implements Probe.DataListener {
 
-    private BasicPipeline pipeline;
+    private FunfManager funfManager;
+    private WifiProbe wifiProbe;
+    private SimpleLocationProbe locationProbe;
+    private Context context;
+    private ServiceConnection funfManagerConn;
+    public static final String LOCAL_PIPELINE_NAME = "local_pipeline";
+    public static final String REMOTE_PIPELINE_NAME = "remote_pipeline";
+    public static final String ERROR_PIPELINE_NAME = "error_pipeline";
 
-    public LocalFunfManager() {
-        private ServiceConnection funfManagerConn = new ServiceConnection() {
+    private BasicPipeline localPipeline;
+    private BasicPipeline remotePipeline;
+
+
+
+
+    public LocalFunfManager(Context context) {
+        this.context = context;
+    }
+
+    public void start() {
+        funfManagerConn = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 funfManager = ((FunfManager.LocalBinder) service).getManager();
@@ -33,48 +65,15 @@ public class LocalFunfManager {
                 Gson gson = funfManager.getGson();
                 wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
                 locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
-                pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-                wifiProbe.registerPassiveListener(MainActivity.this);
-                locationProbe.registerPassiveListener(MainActivity.this);
-
-                // This checkbox enables or disables the pipeline
-                enabledCheckbox.setChecked(pipeline.isEnabled());
-                enabledCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (funfManager != null) {
-                            if (isChecked) {
-                                funfManager.enablePipeline(PIPELINE_NAME);
-
-                                pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-
-
-                                JsonParser parser = new JsonParser();
-                                JsonObject testConfig = parser.parse(getString(R.string.test_config)).getAsJsonObject();
+                //wifiProbe.registerPassiveListener(LocalFunfManager.this);
+                //locationProbe.registerPassiveListener(LocalFunfManager.this);
 
 
 
-                                boolean success = funfManager.saveAndReload(PIPELINE_NAME, testConfig);
-                                funfManager.enablePipeline(PIPELINE_NAME);
 
 
-                                Log.i(TAG, testConfig.toString());
-                                Log.i(TAG, ""+success);
+                updateUI();
 
-
-
-                            } else {
-                                funfManager.disablePipeline(PIPELINE_NAME);
-                            }
-                        }
-                    }
-                });
-
-                // Set UI ready to use, by enabling buttons
-                enabledCheckbox.setEnabled(true);
-                archiveButton.setEnabled(true);
-                scanNowButton.setEnabled(true);
-                getInfoButton.setEnabled(true);
             }
 
             @Override
@@ -84,18 +83,151 @@ public class LocalFunfManager {
 
 
         };
+
+        this.context.bindService(new Intent(this.context, FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE);
     }
 
-    public boolean localSettingsEnabled() {
-        return true;
+    public void destroy() {
+        this.context.unbindService(funfManagerConn);
     }
 
-    public void setLocalSettings() {
+    public void requestLocalPipeline() {
+        setRequestedPipelineName(LOCAL_PIPELINE_NAME);
+        reloadPipeline();
+    }
+
+    public void requestRemotePipeline() {
+        setRequestedPipelineName(REMOTE_PIPELINE_NAME);
+        reloadPipeline();
+    }
+
+    private void setRequestedPipelineName(String name) {
+
+        SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("requestedPipelineName", name);
+        editor.commit();
 
     }
 
-    public void setRemoteSettings() {
+    public String getRequestedPipelineName() {
+        SharedPreferences sharedPreferences = this.context.getSharedPreferences(this.context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String name = sharedPreferences.getString("requestedPipelineName", "None");
+        if (name.equals("None")) {
+            setRequestedPipelineName(LOCAL_PIPELINE_NAME);
+            return  LOCAL_PIPELINE_NAME;
+        }
+        return name;
+    }
+
+    private void reloadPipeline() {
+        Log.i(MainActivity.TAG, "private void reloadPipeline() " + getRequestedPipelineName());
+        if (getRequestedPipelineName().equals(REMOTE_PIPELINE_NAME)) setRemotePipeline();
+        else if (getRequestedPipelineName().equals(LOCAL_PIPELINE_NAME)) setLocalPipeline();
+        updateUI();
+    }
+
+    public String getCurrentPipelineName() {
+        localPipeline = (BasicPipeline) funfManager.getRegisteredPipeline(LOCAL_PIPELINE_NAME);
+        remotePipeline = (BasicPipeline) funfManager.getRegisteredPipeline(REMOTE_PIPELINE_NAME);
+        if (remotePipeline.isEnabled()) return REMOTE_PIPELINE_NAME;
+        if (localPipeline.isEnabled()) return LOCAL_PIPELINE_NAME;
+
+        return ERROR_PIPELINE_NAME;
 
     }
 
+    public List<JsonElement> getCurrentPipelineConfig() {
+        return ((BasicPipeline) funfManager.getRegisteredPipeline(getCurrentPipelineName())).getDataRequests();
+    }
+
+    private BasicPipeline getCurrentPipeline() {
+        return (BasicPipeline) funfManager.getRegisteredPipeline(getCurrentPipelineName());
+    }
+
+
+    public boolean collectionEnabled() {
+
+        if (funfManager == null) return false;
+        Log.i(MainActivity.TAG, ""+funfManager.isEnabled(LOCAL_PIPELINE_NAME));
+        Log.i(MainActivity.TAG, ""+funfManager.isEnabled(REMOTE_PIPELINE_NAME));
+        return funfManager.isEnabled(LOCAL_PIPELINE_NAME) || funfManager.isEnabled(REMOTE_PIPELINE_NAME);
+
+    }
+
+
+    public void setLocalPipeline() {
+        Log.i(MainActivity.TAG, "setting local pipeline");
+        funfManager.enablePipeline(LOCAL_PIPELINE_NAME);
+        funfManager.disablePipeline(REMOTE_PIPELINE_NAME);
+    }
+
+    public void setRemotePipeline() {
+        Log.i(MainActivity.TAG, "setting remote pipeline");
+        funfManager.disablePipeline(LOCAL_PIPELINE_NAME);
+        funfManager.enablePipeline(REMOTE_PIPELINE_NAME);
+    }
+
+    public void enable() {
+        Log.i(MainActivity.TAG, "public void enable()");
+        reloadPipeline();
+        updateUI();
+    }
+
+    public void disable() {
+        funfManager.disablePipeline(REMOTE_PIPELINE_NAME);
+        funfManager.disablePipeline(LOCAL_PIPELINE_NAME);
+        updateUI();
+    }
+
+    private void updateUI() {
+        setChanged();
+        notifyObservers();
+    }
+
+    @Override
+    public void onDataReceived(IJsonObject iJsonObject, IJsonObject iJsonObject1) {
+
+    }
+
+    @Override
+    public void onDataCompleted(IJsonObject iJsonObject, JsonElement jsonElement) {
+        wifiProbe.registerPassiveListener(this);
+        locationProbe.registerPassiveListener(this);
+
+    }
+
+    public void archive() {
+        if (collectionEnabled()) {
+            getCurrentPipeline().onRun(BasicPipeline.ACTION_ARCHIVE, null);
+        }
+    }
+
+    public String getInfo() {
+        return getDataInfo();
+    }
+
+    private String getDataInfo() {
+        SQLiteDatabase db = getCurrentPipeline().getDb();
+        Cursor mcursor = db.rawQuery("SELECT name FROM " + NameValueDatabaseHelper.DATA_TABLE.name, null);
+        mcursor.moveToFirst();
+
+        HashMap<String, Integer> dataCount = new HashMap<String, Integer>();
+
+        while (!mcursor.isAfterLast()) {
+            String name = mcursor.getString(0);
+            if (dataCount.containsKey(name)) {
+                dataCount.put(name, dataCount.get(name) +1);
+            }
+            else {
+                dataCount.put(name, 1);
+            }
+            //Log.i(TAG, name);
+            mcursor.moveToNext();
+        }
+
+        Log.i(MainActivity.TAG, dataCount.toString());
+        mcursor.close();
+        return dataCount.toString();
+    }
 }
