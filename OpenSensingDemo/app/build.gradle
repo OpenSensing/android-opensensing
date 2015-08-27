@@ -30,3 +30,34 @@ repositories{
         dirs 'libs'
     }
 }
+
+
+
+def getVersionName = {->
+    println '*** getVersionName'
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'symbolic-ref', '--short', '-q', 'HEAD'
+            standardOutput = stdout
+        }
+
+        def stdout2 = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'log', '-1', '--format=%h'
+            standardOutput = stdout2
+        }
+
+        def return_value = stdout.toString().trim() + "-" + stdout2.toString().trim()
+        return return_value
+    }
+    catch (ignored) {
+        return null;
+    }
+}
+
+android {
+    defaultConfig {
+        versionName getVersionName()
+    }
+}

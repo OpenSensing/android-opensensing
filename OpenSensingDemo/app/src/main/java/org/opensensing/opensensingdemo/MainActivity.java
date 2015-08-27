@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -66,6 +67,7 @@ public class MainActivity extends Activity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getVersionName();
 
         localFunfManager = new LocalFunfManager(this);
         localFunfManager.addObserver(this);
@@ -155,8 +157,9 @@ public class MainActivity extends Activity implements Observer {
     }
 
     private void updateUI() {
-        Log.i(TAG, "Update UI here "+localFunfManager.collectionEnabled());
+        Log.i(TAG, "Update UI here " + localFunfManager.collectionEnabled());
         enabledSwitch.setEnabled(true);
+        ((TextView) findViewById(R.id.versionTextView)).setText(getVersionName());
         if (localFunfManager.collectionEnabled()) {
 
             enabledSwitch.setOnCheckedChangeListener(null);
@@ -188,4 +191,18 @@ public class MainActivity extends Activity implements Observer {
         updateUI();
     }
 
+    private String getVersionName() {
+        String versionName = "";
+
+        try {
+            versionName = getPackageManager().getPackageInfo("org.opensensing.opensensingdemo", 0).versionName;
+
+        } catch (PackageManager.NameNotFoundException e) {
+
+        }
+
+        Log.i(TAG, "Running version: "+ versionName);
+        return versionName;
+
+    }
 }
