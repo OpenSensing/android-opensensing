@@ -12,7 +12,8 @@
         >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -21,8 +22,13 @@
 
         <activity
             android:name=".SettingsActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
              >
         </activity>
+        <activity android:name=".ProbeConfigDetails"
+            android:screenOrientation="portrait"
+            ></activity>
 
         <service android:name="edu.mit.media.funf.FunfManager">
             <meta-data android:name="local_pipeline" android:value="@string/default_pipeline"/>

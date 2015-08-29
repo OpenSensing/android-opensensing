@@ -31,6 +31,7 @@ import com.google.gson.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONStringer;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class MainActivity extends Activity implements Observer {
 
     public static final String TAG = "OPEN_SENSING_DEMO";
 
-    private Button archiveButton;
+    private Button uploadButton;
     private Button getInfoButton;
     private Handler handler;
     private LocalFunfManager localFunfManager;
@@ -60,6 +61,7 @@ public class MainActivity extends Activity implements Observer {
     private View.OnClickListener getInfoButtonListener;
     private CompoundButton.OnCheckedChangeListener enabledSwitchListener;
     private TextView pipelineInUseTextView;
+    private TextView infoTextView;
 
 
     @Override
@@ -72,16 +74,19 @@ public class MainActivity extends Activity implements Observer {
         localFunfManager = new LocalFunfManager(this);
         localFunfManager.addObserver(this);
 
+        infoTextView = (TextView) findViewById(R.id.infoTextView);
 
         // Used to make interface changes on main thread
         handler = new Handler();
 
-        archiveButton = (Button) findViewById(R.id.archiveButton);
-        archiveButton.setEnabled(true);
-        archiveButton.setOnClickListener(new View.OnClickListener() {
+        uploadButton = (Button) findViewById(R.id.uploadButton);
+        uploadButton.setEnabled(true);
+        uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                localFunfManager.archive();
+                Toast.makeText(getApplicationContext(), "not implemented yet", Toast.LENGTH_LONG).show();
+
+
             }
         });
 
@@ -101,6 +106,7 @@ public class MainActivity extends Activity implements Observer {
         enabledSwitchListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (localFunfManager == null) return;
                 if (isChecked) localFunfManager.enable();
                 else localFunfManager.disable();
             }
@@ -112,6 +118,7 @@ public class MainActivity extends Activity implements Observer {
         // Bind to the service, to create the connection with FunfManager
         //bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
         localFunfManager.start();
+
 
 
     }
@@ -153,7 +160,7 @@ public class MainActivity extends Activity implements Observer {
 
 
     private void getInfo() {
-        localFunfManager.getInfo();
+        infoTextView.setText(localFunfManager.getInfo());
     }
 
     private void updateUI() {
@@ -168,7 +175,7 @@ public class MainActivity extends Activity implements Observer {
             enabledSwitch.setText("Collection enabled");
 
             getInfoButton.setEnabled(true);
-            archiveButton.setEnabled(true);
+            uploadButton.setEnabled(true);
 
             pipelineInUseTextView.setText(localFunfManager.getCurrentPipelineName());
         }
@@ -179,7 +186,7 @@ public class MainActivity extends Activity implements Observer {
             enabledSwitch.setText("Collection disabled");
 
             getInfoButton.setEnabled(false);
-            archiveButton.setEnabled(false);
+            uploadButton.setEnabled(false);
 
             pipelineInUseTextView.setText("");
         }

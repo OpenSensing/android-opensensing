@@ -68,9 +68,7 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
                 //wifiProbe.registerPassiveListener(LocalFunfManager.this);
                 //locationProbe.registerPassiveListener(LocalFunfManager.this);
 
-
-
-
+                Log.i(MainActivity.TAG, ">>> "+getCurrentPipelineConfig().toString());
 
                 updateUI();
 
@@ -137,12 +135,27 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
 
     }
 
-    public List<JsonElement> getCurrentPipelineConfig() {
-        return ((BasicPipeline) funfManager.getRegisteredPipeline(getCurrentPipelineName())).getDataRequests();
+    public JsonObject getCurrentPipelineConfig() {
+        return funfManager.getPipelineConfig(getCurrentPipelineName());
+    }
+
+    public List<JsonElement> getCurrentPipelineDataRequests() {
+        return getCurrentPipeline().getDataRequests();
     }
 
     private BasicPipeline getCurrentPipeline() {
         return (BasicPipeline) funfManager.getRegisteredPipeline(getCurrentPipelineName());
+    }
+
+    public void setCurrentPipelineConfig(JsonObject config) {
+       // getCurrentPipeline().setDataRequests(config);
+        //getCurrentPipeline().setDataRequests(((BasicPipeline)funfManager.getRegisteredPipeline(LOCAL_PIPELINE_NAME)).getDataRequests());
+        //BasicPipeline pipeline = ((BasicPipeline) funfManager.getRegisteredPipeline(REMOTE_PIPELINE_NAME));
+        //pipeline.setDataRequests(((BasicPipeline)funfManager.getRegisteredPipeline(LOCAL_PIPELINE_NAME)).getDataRequests());
+        //reloadPipeline();
+        //funfManager.unrequestAllData(this);
+        if (!(funfManager==null)) funfManager.saveAndReload(getCurrentPipelineName(), config);
+        //Log.i(MainActivity.TAG, ">>> " + getCurrentPipelineConfig().toString());
     }
 
 
@@ -192,8 +205,8 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
 
     @Override
     public void onDataCompleted(IJsonObject iJsonObject, JsonElement jsonElement) {
-        wifiProbe.registerPassiveListener(this);
-        locationProbe.registerPassiveListener(this);
+        //wifiProbe.registerPassiveListener(this);
+        //locationProbe.registerPassiveListener(this);
 
     }
 

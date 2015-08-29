@@ -33,14 +33,39 @@
                 android:layout_height="wrap_content"
                 android:text="Remote pipeline"
                 android:id="@+id/remoteConfigRadioButton" />
+
         </RadioGroup>
 
-        <TextView
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Small Text"
-            android:id="@+id/configTextView"
-            android:layout_gravity="center_horizontal" />
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="pipeline configuration"
+                android:id="@+id/textView"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@+id/saveConfigButton" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="save"
+                android:id="@+id/saveConfigButton"
+                android:layout_below="@+id/textView"
+                android:layout_alignParentEnd="true" />
+
+            <ExpandableListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/configExpandableListView"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/saveConfigButton" />
+
+        </RelativeLayout>
+
     </LinearLayout>
 </RelativeLayout>
