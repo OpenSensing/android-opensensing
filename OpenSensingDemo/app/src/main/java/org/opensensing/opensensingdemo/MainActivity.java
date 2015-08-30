@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements Observer {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getVersionName();
+
 
         localFunfManager = new LocalFunfManager(this);
         localFunfManager.addObserver(this);
@@ -120,7 +120,6 @@ public class MainActivity extends Activity implements Observer {
         localFunfManager.start();
 
 
-
     }
 
     protected void onResume() {
@@ -166,7 +165,7 @@ public class MainActivity extends Activity implements Observer {
     private void updateUI() {
         Log.i(TAG, "Update UI here " + localFunfManager.collectionEnabled());
         enabledSwitch.setEnabled(true);
-        ((TextView) findViewById(R.id.versionTextView)).setText(getVersionName());
+        ((TextView) findViewById(R.id.versionTextView)).setText("collector: " + getVersionName() + "\n" + "funf: " + localFunfManager.getFunfVersion());
         if (localFunfManager.collectionEnabled()) {
 
             enabledSwitch.setOnCheckedChangeListener(null);
@@ -209,6 +208,9 @@ public class MainActivity extends Activity implements Observer {
         }
 
         Log.i(TAG, "Running version: "+ versionName);
+
+
+
         return versionName;
 
     }

@@ -68,7 +68,9 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
                 //wifiProbe.registerPassiveListener(LocalFunfManager.this);
                 //locationProbe.registerPassiveListener(LocalFunfManager.this);
 
-                Log.i(MainActivity.TAG, ">>> "+getCurrentPipelineConfig().toString());
+                Log.i(MainActivity.TAG, "running funf "+getFunfVersion());
+
+
 
                 updateUI();
 
@@ -218,6 +220,11 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
 
     public String getInfo() {
         return getDataInfo();
+    }
+
+    public String getFunfVersion() {
+        if (funfManager == null) return "unknown";
+        return funfManager.getVersion();
     }
 
     private String getDataInfo() {

@@ -58,7 +58,8 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/versionTextView"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:textSize="10dp" />
 
 
         </RelativeLayout>
