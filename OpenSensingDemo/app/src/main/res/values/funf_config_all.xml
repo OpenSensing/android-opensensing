@@ -5,7 +5,8 @@
          "name":"default",
          "version":1,
           "archive": {
-		    "@schedule": {"interval": 3600}
+		    "@schedule": {"interval": 3600},
+            "compress": true
           },
          "data":[
             "edu.mit.media.funf.probe.builtin.WifiProbe",

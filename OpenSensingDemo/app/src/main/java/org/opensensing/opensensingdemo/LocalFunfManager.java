@@ -72,6 +72,7 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
 
 
 
+
                 updateUI();
 
             }
@@ -213,7 +214,7 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     }
 
     public void archive() {
-        if (collectionEnabled()) {
+        if (getCurrentPipeline().isEnabled()) {
             getCurrentPipeline().onRun(BasicPipeline.ACTION_ARCHIVE, null);
         }
     }

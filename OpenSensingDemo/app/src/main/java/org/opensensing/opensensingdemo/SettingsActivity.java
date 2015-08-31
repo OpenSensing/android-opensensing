@@ -240,6 +240,7 @@ public class SettingsActivity extends Activity implements Observer {
     }
 
     //TODO move this to LocalFunfManager
+    //TODO disable probes for which we don't have permissions
     private void buildConfig() {
 
         //List<JsonElement> requestedConfig = new ArrayList<JsonElement>();

@@ -28,6 +28,13 @@
             android:id="@+id/pipelineInUseTextView"
             android:layout_gravity="center_horizontal" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="archive"
+            android:id="@+id/archiveButton"
+            android:layout_gravity="center_horizontal" />
+
         <Button android:id="@+id/uploadButton"
             android:text="Upload"
             android:layout_width="fill_parent"

@@ -53,6 +53,7 @@ public class MainActivity extends Activity implements Observer {
 
     public static final String TAG = "OPEN_SENSING_DEMO";
 
+    private Button archiveButton;
     private Button uploadButton;
     private Button getInfoButton;
     private Handler handler;
@@ -78,6 +79,15 @@ public class MainActivity extends Activity implements Observer {
 
         // Used to make interface changes on main thread
         handler = new Handler();
+
+        archiveButton = (Button) findViewById(R.id.archiveButton);
+        archiveButton.setEnabled(true);
+        archiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                localFunfManager.archive();
+            }
+        });
 
         uploadButton = (Button) findViewById(R.id.uploadButton);
         uploadButton.setEnabled(true);

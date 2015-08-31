@@ -7,7 +7,8 @@
          "name":"test_config",
          "version":1,
         "archive": {
-		    "@schedule": {"interval": 3600}
+		    "@schedule": {"interval": 3600},
+            "compress": true
           },
          "data":[
             {"@type": "edu.mit.media.funf.probe.builtin.HardwareInfoProbe", "@schedule": {"interval": 600, "duration": 10, "strict": false}}
