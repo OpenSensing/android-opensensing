@@ -28,6 +28,7 @@ import edu.mit.media.funf.pipeline.BasicPipeline;
 import edu.mit.media.funf.probe.Probe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
 import edu.mit.media.funf.probe.builtin.WifiProbe;
+import edu.mit.media.funf.storage.HttpArchive;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 
 /**
@@ -194,6 +195,13 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
         funfManager.disablePipeline(REMOTE_PIPELINE_NAME);
         funfManager.disablePipeline(LOCAL_PIPELINE_NAME);
         updateUI();
+    }
+
+    public void upload() {
+        //getCurrentPipeline().setUpload(new HttpArchive(this.context, "http://raman.imm.dtu.dk"));
+        Log.i(MainActivity.TAG, "ARCHIVE: " + getCurrentPipeline().getUpload().toString());
+        getCurrentPipeline().onRun(BasicPipeline.ACTION_UPLOAD, null);
+
     }
 
     private void updateUI() {

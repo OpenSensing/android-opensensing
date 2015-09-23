@@ -8,6 +8,10 @@
 		    "@schedule": {"interval": 3600},
             "compress": true
           },
+          "upload": {
+			"url": "http\:\/\/raman.imm.dtu.dk",
+			"@schedule": {"interval": 86400}
+		 },
          "data":[
             "edu.mit.media.funf.probe.builtin.WifiProbe",
             "edu.mit.media.funf.probe.builtin.LocationProbe",

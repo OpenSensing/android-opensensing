@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements Observer {
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "not implemented yet", Toast.LENGTH_LONG).show();
+                localFunfManager.upload();
 
 
             }
