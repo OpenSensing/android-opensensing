@@ -53,6 +53,7 @@ public class MainActivity extends Activity implements Observer {
 
     public static final String TAG = "OPEN_SENSING_DEMO";
 
+    private Button archiveButton;
     private Button uploadButton;
     private Button getInfoButton;
     private Handler handler;
@@ -63,13 +64,15 @@ public class MainActivity extends Activity implements Observer {
     private TextView pipelineInUseTextView;
     private TextView infoTextView;
 
+    public static boolean isActive;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        isActive = false;
 
         localFunfManager = new LocalFunfManager(this);
         localFunfManager.addObserver(this);
@@ -79,12 +82,21 @@ public class MainActivity extends Activity implements Observer {
         // Used to make interface changes on main thread
         handler = new Handler();
 
+        archiveButton = (Button) findViewById(R.id.archiveButton);
+        archiveButton.setEnabled(true);
+        archiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                localFunfManager.archive();
+            }
+        });
+
         uploadButton = (Button) findViewById(R.id.uploadButton);
         uploadButton.setEnabled(true);
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "not implemented yet", Toast.LENGTH_LONG).show();
+                localFunfManager.upload();
 
 
             }
@@ -124,7 +136,14 @@ public class MainActivity extends Activity implements Observer {
 
     protected void onResume() {
         super.onResume();
+        isActive = true;
         updateUI();
+
+    }
+
+    protected void onPause() {
+        super.onPause();
+        isActive = false;
     }
 
     protected void onDestroy() {
@@ -149,6 +168,11 @@ public class MainActivity extends Activity implements Observer {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        if (id == R.id.action_auth) {
+            Intent intent = new Intent(this, AuthenticationActivity.class);
             startActivity(intent);
             return true;
         }

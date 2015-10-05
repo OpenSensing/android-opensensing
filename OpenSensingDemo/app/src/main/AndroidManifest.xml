@@ -26,13 +26,30 @@
             android:screenOrientation="portrait"
              >
         </activity>
+        <activity
+            android:name=".AuthenticationActivity"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+        <activity
+        android:name="com.dropbox.client2.android.AuthActivity"
+        android:launchMode="singleTask"
+        android:configChanges="orientation|keyboard">
+        <intent-filter>
+            <!-- Change this to be db- followed by your app key -->
+            <data android:scheme="db-" />
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+    </activity>
         <activity android:name=".ProbeConfigDetails"
             android:screenOrientation="portrait"
             ></activity>
 
         <service android:name="edu.mit.media.funf.FunfManager">
-            <meta-data android:name="local_pipeline" android:value="@string/default_pipeline"/>
-            <meta-data android:name="remote_pipeline" android:value="@string/test_config"/>
+           <meta-data android:name="local_pipeline" android:value="@string/local_pipeline"/>
+            <meta-data android:name="remote_pipeline" android:value="@string/remote_pipeline"/>
         </service>
         <receiver android:name="edu.mit.media.funf.Launcher" android:enabled="true">
             <intent-filter>
@@ -41,6 +58,11 @@
                 <action android:name="android.intent.action.DOCK_EVENT" />
                 <action android:name="android.intent.action.ACTION_SCREEN_ON" />
                 <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="org.opensensing.opensensingdemo.AuthErrorBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="org.opensensing.opensensingdemo.AUTHENTICATION_ERROR" />
             </intent-filter>
         </receiver>
 
@@ -66,5 +88,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
 </manifest>

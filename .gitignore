@@ -30,3 +30,4 @@ proguard/
 *.jar
 *.aar
 *.iml
+SECURE_*
