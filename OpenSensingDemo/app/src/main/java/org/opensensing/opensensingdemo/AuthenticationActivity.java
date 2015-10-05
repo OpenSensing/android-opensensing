@@ -22,9 +22,8 @@ import com.dropbox.client2.session.AppKeyPair;
  */
 public class AuthenticationActivity extends Activity {
 
-    //TODO move this to separate file that will not be checked in
-    private static final String APP_KEY = "kjhaj6zc89z6mdo";
-    private static final String APP_SECRET = "vmkfg13gy9j2yw9";
+    private static String APP_KEY = "";
+    private static String APP_SECRET = "";
 
     private static final String ACCOUNT_PREFS_NAME = "prefs";
     private static final String ACCESS_KEY_NAME = "ACCESS_KEY";
@@ -44,6 +43,9 @@ public class AuthenticationActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         isActive = false;
+        APP_KEY = this.getString(R.string.DROPBOX_APP_KEY);
+        APP_SECRET = this.getString(R.string.DROPBOX_APP_SECRET);
+
         AndroidAuthSession session = buildSession();
         mApi = new DropboxAPI<AndroidAuthSession>(session);
 
