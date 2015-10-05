@@ -71,9 +71,6 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
 
                 Log.i(MainActivity.TAG, "running funf "+getFunfVersion());
 
-
-
-
                 updateUI();
 
             }
@@ -152,14 +149,7 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     }
 
     public void setCurrentPipelineConfig(JsonObject config) {
-       // getCurrentPipeline().setDataRequests(config);
-        //getCurrentPipeline().setDataRequests(((BasicPipeline)funfManager.getRegisteredPipeline(LOCAL_PIPELINE_NAME)).getDataRequests());
-        //BasicPipeline pipeline = ((BasicPipeline) funfManager.getRegisteredPipeline(REMOTE_PIPELINE_NAME));
-        //pipeline.setDataRequests(((BasicPipeline)funfManager.getRegisteredPipeline(LOCAL_PIPELINE_NAME)).getDataRequests());
-        //reloadPipeline();
-        //funfManager.unrequestAllData(this);
         if (!(funfManager==null)) funfManager.saveAndReload(getCurrentPipelineName(), config);
-        //Log.i(MainActivity.TAG, ">>> " + getCurrentPipelineConfig().toString());
     }
 
 
@@ -198,8 +188,7 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     }
 
     public void upload() {
-        //getCurrentPipeline().setUpload(new HttpArchive(this.context, "http://raman.imm.dtu.dk"));
-        Log.i(MainActivity.TAG, "ARCHIVE: " + getCurrentPipeline().getUpload().toString());
+        Log.i(MainActivity.TAG, "UPLOAD: " + getCurrentPipeline().getUploader().toString() + " " + getCurrentPipelineConfig().get("upload"));
         getCurrentPipeline().onRun(BasicPipeline.ACTION_UPLOAD, null);
 
     }
@@ -258,5 +247,17 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
         Log.i(MainActivity.TAG, dataCount.toString());
         mcursor.close();
         return dataCount.toString();
+    }
+
+    public void setAuthToken(String token) {
+        String url = "";
+        try {
+             url = getCurrentPipelineConfig().get("upload").getAsJsonObject().get("url").getAsString();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        Log.i(MainActivity.TAG, "pipeline: "+ url + " "+token);
+        if (funfManager == null) return;
+        funfManager.setAuthToken(url, token);
     }
 }

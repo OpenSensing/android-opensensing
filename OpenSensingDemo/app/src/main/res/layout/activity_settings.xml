@@ -25,14 +25,16 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Local pipeline"
-                android:id="@+id/localConfigRadioButton" />
+                android:text="Remote pipeline"
+                android:id="@+id/remoteConfigRadioButton" />
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Remote pipeline"
-                android:id="@+id/remoteConfigRadioButton" />
+                android:text="Local pipeline"
+                android:id="@+id/localConfigRadioButton" />
+
+
 
         </RadioGroup>
 
@@ -58,12 +60,22 @@
                 android:layout_below="@+id/textView"
                 android:layout_alignParentEnd="true" />
 
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/urlEditText"
+                android:layout_below="@+id/saveConfigButton"
+                android:layout_alignParentStart="true"
+                android:text="url" />
+
             <ExpandableListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/configExpandableListView"
                 android:layout_gravity="center_horizontal"
-                android:layout_below="@+id/saveConfigButton" />
+                android:layout_below="@+id/urlEditText" />
+
+
 
         </RelativeLayout>
 

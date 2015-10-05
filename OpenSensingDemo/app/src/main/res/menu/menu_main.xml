@@ -2,4 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_auth" android:title="@string/action_auth"
+        android:orderInCategory="99" android:showAsAction="never" />
 </menu>

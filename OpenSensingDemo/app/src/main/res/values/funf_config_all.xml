@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-      <string name="default_pipeline">
+      <string name="local_pipeline">
         {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
-         "name":"default",
+         "name":"local_pipeline",
          "version":1,
           "archive": {
-		    "@schedule": {"interval": 3600},
+		    "@schedule": {"interval": 300},
             "compress": true
           },
           "upload": {
-			"url": "http\:\/\/raman.imm.dtu.dk",
-			"@schedule": {"interval": 86400}
+			"url": \"https://content.dropboxapi.com/1/files_put/auto/incoming/$FILENAME$?access_token=$ACCESS_TOKEN$\",
+			"@schedule": {"interval": 600}
 		 },
          "data":[
             "edu.mit.media.funf.probe.builtin.WifiProbe",
