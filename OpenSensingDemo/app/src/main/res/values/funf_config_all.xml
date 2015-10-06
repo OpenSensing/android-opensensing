@@ -6,7 +6,8 @@
          "version":1,
           "archive": {
 		    "@schedule": {"interval": 300},
-            "compress": true
+            "compress": true,
+            "password": "changeme"
           },
           "upload": {
 			"url": \"https://content.dropboxapi.com/1/files_put/auto/incoming/$FILENAME$?access_token=$ACCESS_TOKEN$\",
