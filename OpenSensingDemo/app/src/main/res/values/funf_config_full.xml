@@ -15,8 +15,6 @@
           "edu.mit.media.funf.probe.builtin.AudioMediaProbe",
           "edu.mit.media.funf.probe.builtin.BatteryProbe",
           "edu.mit.media.funf.probe.builtin.BluetoothProbe",
-          "edu.mit.media.funf.probe.builtin.BrowserBookmarksProbe",
-          "edu.mit.media.funf.probe.builtin.BrowserSearchesProbe",
           "edu.mit.media.funf.probe.builtin.CallLogProbe",
           "edu.mit.media.funf.probe.builtin.CellTowerProbe",
           "edu.mit.media.funf.probe.builtin.ContactProbe",
