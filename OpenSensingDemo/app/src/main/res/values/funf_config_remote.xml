@@ -1,0 +1,51 @@
+<resources>
+    <string name="remote_pipeline">
+        {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
+         "name":"remote_pipeline",
+         "version":1,
+          "archive": {
+		    "@schedule": {"interval": 3600},
+            "compress": true,
+            "password": "changeme"
+          },
+          "upload": {
+			"url": \"https://content.dropboxapi.com/1/files_put/auto/incoming/$FILENAME$?access_token=$ACCESS_TOKEN$\",
+			"@schedule": {"interval": 7200},
+            "wifiOnly": true
+		 },
+          "update": {
+            "url": \"https://content.dropboxapi.com/1/files/auto/config/config_remote.json?access_token=$ACCESS_TOKEN$\",
+            "@schedule": {"interval": 14400}
+          },
+         "data":[
+            {"@type": "edu.mit.media.funf.probe.builtin.BluetoothProbe", "@schedule": {"interval": 300, "duration": 90, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.CellTowerProbe", "@schedule": {"interval": 600, "duration": 30, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.HardwareInfoProbe", "@schedule": {"interval": 600, "duration": 30, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe", "@schedule": {"interval": 0, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.TimeOffsetProbe", "@schedule": {"interval": 21600, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.WifiProbe", "@schedule": {"interval": 600, "duration": 30, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.SmsProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.CallLogProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.AndroidInfoProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.LocationProbe", "@schedule": {"interval": 300, "duration": 30, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe", "@schedule": {"interval": 300, "duration": 15, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.AccountsProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.ActivityProbe", "@schedule": {"interval": 300, "duration": 15, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.ApplicationsProbe", "@schedule": {"interval": 0, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.AudioFeaturesProbe", "@schedule": {"interval": 600, "duration": 15, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.AudioMediaProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.BatteryProbe", "@schedule": {"interval": 300, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.ContactProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.ImageMediaProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.LightSensorProbe", "@schedule": {"interval": 300, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.ProcessStatisticsProbe", "@schedule": {"interval": 600, "duration": 30, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.ProximitySensorProbe", "@schedule": {"interval": 600, "duration": 10, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.RunningApplicationsProbe", "@schedule": {"interval": 0, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.ServicesProbe", "@schedule": {"interval": 1200, "duration": 15, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.TelephonyProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.TemperatureSensorProbe", "@schedule": {"interval": 1200, "duration": 10, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.VideoMediaProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}}
+         ]
+        }
+    </string>
+</resources>
