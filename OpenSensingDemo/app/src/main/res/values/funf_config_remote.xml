@@ -18,12 +18,12 @@
             "@schedule": {"interval": 14400}
           },
          "data":[
-            {"@type": "edu.mit.media.funf.probe.builtin.BluetoothProbe", "@schedule": {"interval": 300, "duration": 90, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.BluetoothProbe", "@schedule": {"interval": 300, "maxScanTime": 60, "include_scan_started": true, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.CellTowerProbe", "@schedule": {"interval": 600, "duration": 30, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.HardwareInfoProbe", "@schedule": {"interval": 600, "duration": 30, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe", "@schedule": {"interval": 0, "duration": 0, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.TimeOffsetProbe", "@schedule": {"interval": 21600, "duration": 0, "strict": false, "opportunistic": true}},
-            {"@type": "edu.mit.media.funf.probe.builtin.WifiProbe", "@schedule": {"interval": 600, "duration": 30, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.WifiProbe", "@schedule": {"interval": 600, "duration": 30, "include_scan_started": true, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.SmsProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.CallLogProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.AndroidInfoProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
