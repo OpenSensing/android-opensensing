@@ -37,7 +37,7 @@
             {"@type": "edu.mit.media.funf.probe.builtin.BatteryProbe", "@schedule": {"interval": 300, "duration": 0, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.ContactProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.ImageMediaProbe", "@schedule": {"interval": 43200, "duration": 0, "strict": false, "opportunistic": true}},
-            {"@type": "edu.mit.media.funf.probe.builtin.LightSensorProbe", "@schedule": {"interval": 300, "duration": 0, "strict": false, "opportunistic": true}},
+            {"@type": "edu.mit.media.funf.probe.builtin.LightSensorProbe", "@schedule": {"interval": 300, "duration": 5, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.ProcessStatisticsProbe", "@schedule": {"interval": 600, "duration": 30, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.ProximitySensorProbe", "@schedule": {"interval": 600, "duration": 10, "strict": false, "opportunistic": true}},
             {"@type": "edu.mit.media.funf.probe.builtin.RunningApplicationsProbe", "@schedule": {"interval": 0, "duration": 0, "strict": false, "opportunistic": true}},
