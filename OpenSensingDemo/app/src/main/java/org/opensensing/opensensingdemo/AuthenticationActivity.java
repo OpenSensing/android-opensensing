@@ -49,7 +49,7 @@ public class AuthenticationActivity extends Activity {
         AndroidAuthSession session = buildSession();
         mApi = new DropboxAPI<AndroidAuthSession>(session);
 
-        localFunfManager = new LocalFunfManager(this);
+        localFunfManager = LocalFunfManager.getLocalFunfManager(this);
         localFunfManager.start();
 
         setContentView(R.layout.activity_authentication);
