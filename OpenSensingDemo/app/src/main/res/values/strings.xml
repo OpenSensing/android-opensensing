@@ -3,33 +3,6 @@
 
     <string name="action_settings">Settings</string>
     <string name="action_auth">Link to openPDS</string>
-    <string name="remote_pipeline">
-        {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
-         "name":"remote_pipeline",
-         "version":1,
-          "archive": {
-		    "@schedule": {"interval": 300},
-            "compress": true
-          },
-          "upload": {
-			"url": \"https://content.dropboxapi.com/1/files_put/auto/incoming/$FILENAME$?access_token=$ACCESS_TOKEN$\",
-			"@schedule": {"interval": 600}
-		 },
-          "update": {
-            "url": \"https://content.dropboxapi.com/1/files/auto/config/config_remote.json?access_token=$ACCESS_TOKEN$\",
-            "@schedule": {"interval": 600}
-          },
-         "data":[
-            "edu.mit.media.funf.probe.builtin.WifiProbe",
-            "edu.mit.media.funf.probe.builtin.LocationProbe",
-            {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe", "@schedule": {"interval": 300, "duration": 10, "strict": false}},
-            "edu.mit.media.funf.probe.builtin.BatteryProbe",
-            {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe", "@schedule": {"interval": 300, "duration": 10, "strict": false}},
-            {"@type": "edu.mit.media.funf.probe.builtin.AccountsProbe", "@schedule": {"interval": 300, "duration": 10, "strict": false}},
-            {"@type": "edu.mit.media.funf.probe.builtin.AndroidInfoProbe", "@schedule": {"interval": 300, "duration": 10, "strict": false}}
-         ]
-        }
-    </string>
     <string name="preference_file_key">org.opensensing.PREFERENCES</string>
     <string name="version">0.0.1</string>
     <integer name="notification_id">1987</integer>

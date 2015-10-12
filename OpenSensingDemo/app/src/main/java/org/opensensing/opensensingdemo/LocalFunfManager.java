@@ -7,16 +7,10 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
-import android.widget.CompoundButton;
-import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +20,6 @@ import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.BasicPipeline;
 import edu.mit.media.funf.probe.Probe;
-import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
-import edu.mit.media.funf.probe.builtin.WifiProbe;
-import edu.mit.media.funf.storage.HttpArchive;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 
 /**
@@ -37,18 +28,11 @@ import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 public class LocalFunfManager extends Observable implements Probe.DataListener {
 
     private FunfManager funfManager;
-    private WifiProbe wifiProbe;
-    private SimpleLocationProbe locationProbe;
     private Context context;
     private ServiceConnection funfManagerConn;
     public static final String LOCAL_PIPELINE_NAME = "local_pipeline";
     public static final String REMOTE_PIPELINE_NAME = "remote_pipeline";
     public static final String ERROR_PIPELINE_NAME = "error_pipeline";
-
-    private BasicPipeline localPipeline;
-    private BasicPipeline remotePipeline;
-
-
 
 
     public LocalFunfManager(Context context) {
@@ -60,19 +44,7 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 funfManager = ((FunfManager.LocalBinder) service).getManager();
-
-
-
-                Gson gson = funfManager.getGson();
-                wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
-                locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
-                //wifiProbe.registerPassiveListener(LocalFunfManager.this);
-                //locationProbe.registerPassiveListener(LocalFunfManager.this);
-
-                Log.i(MainActivity.TAG, "running funf "+getFunfVersion());
-
                 updateUI();
-
             }
 
             @Override
@@ -120,17 +92,17 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     }
 
     private void reloadPipeline() {
-        Log.i(MainActivity.TAG, "private void reloadPipeline() " + getRequestedPipelineName());
         if (getRequestedPipelineName().equals(REMOTE_PIPELINE_NAME)) setRemotePipeline();
         else if (getRequestedPipelineName().equals(LOCAL_PIPELINE_NAME)) setLocalPipeline();
         updateUI();
     }
 
     public String getCurrentPipelineName() {
-        localPipeline = (BasicPipeline) funfManager.getRegisteredPipeline(LOCAL_PIPELINE_NAME);
-        remotePipeline = (BasicPipeline) funfManager.getRegisteredPipeline(REMOTE_PIPELINE_NAME);
-        if (remotePipeline.isEnabled()) return REMOTE_PIPELINE_NAME;
+        BasicPipeline localPipeline = (BasicPipeline) funfManager.getRegisteredPipeline(LOCAL_PIPELINE_NAME);
+        BasicPipeline remotePipeline = (BasicPipeline) funfManager.getRegisteredPipeline(REMOTE_PIPELINE_NAME);
+
         if (localPipeline.isEnabled()) return LOCAL_PIPELINE_NAME;
+        if (remotePipeline.isEnabled()) return REMOTE_PIPELINE_NAME;
 
         return ERROR_PIPELINE_NAME;
 
@@ -156,27 +128,22 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     public boolean collectionEnabled() {
 
         if (funfManager == null) return false;
-        Log.i(MainActivity.TAG, ""+funfManager.isEnabled(LOCAL_PIPELINE_NAME));
-        Log.i(MainActivity.TAG, ""+funfManager.isEnabled(REMOTE_PIPELINE_NAME));
         return funfManager.isEnabled(LOCAL_PIPELINE_NAME) || funfManager.isEnabled(REMOTE_PIPELINE_NAME);
 
     }
 
 
     public void setLocalPipeline() {
-        Log.i(MainActivity.TAG, "setting local pipeline");
         funfManager.enablePipeline(LOCAL_PIPELINE_NAME);
         funfManager.disablePipeline(REMOTE_PIPELINE_NAME);
     }
 
     public void setRemotePipeline() {
-        Log.i(MainActivity.TAG, "setting remote pipeline");
         funfManager.disablePipeline(LOCAL_PIPELINE_NAME);
         funfManager.enablePipeline(REMOTE_PIPELINE_NAME);
     }
 
     public void enable() {
-        Log.i(MainActivity.TAG, "public void enable()");
         reloadPipeline();
         updateUI();
     }
@@ -188,7 +155,6 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     }
 
     public void upload() {
-        Log.i(MainActivity.TAG, "UPLOAD: " + getCurrentPipeline().getUploader().toString() + " " + getCurrentPipelineConfig().get("upload"));
         getCurrentPipeline().onRun(BasicPipeline.ACTION_UPLOAD, null);
 
     }
@@ -205,8 +171,6 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
 
     @Override
     public void onDataCompleted(IJsonObject iJsonObject, JsonElement jsonElement) {
-        //wifiProbe.registerPassiveListener(this);
-        //locationProbe.registerPassiveListener(this);
 
     }
 
@@ -240,11 +204,9 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
             else {
                 dataCount.put(name, 1);
             }
-            //Log.i(TAG, name);
             mcursor.moveToNext();
         }
 
-        Log.i(MainActivity.TAG, dataCount.toString());
         mcursor.close();
         return dataCount.toString();
     }
@@ -256,7 +218,6 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        Log.i(MainActivity.TAG, "pipeline: "+ url + " "+token);
         if (funfManager == null) return;
         funfManager.setAuthToken(url, token);
     }
