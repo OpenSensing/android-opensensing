@@ -37,6 +37,11 @@
             >
         </activity>
         <activity
+            android:name=".ArchiveConfigDetails"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+        <activity
         android:name="com.dropbox.client2.android.AuthActivity"
         android:launchMode="singleTask"
         android:configChanges="orientation|keyboard">
