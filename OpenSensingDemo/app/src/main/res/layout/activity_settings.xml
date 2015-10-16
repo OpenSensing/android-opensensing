@@ -60,20 +60,29 @@
                 android:layout_below="@+id/textView"
                 android:layout_alignParentEnd="true" />
 
-            <EditText
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/urlEditText"
+                android:text="upload config"
+                android:id="@+id/uploadConfigButton"
                 android:layout_below="@+id/saveConfigButton"
-                android:layout_alignParentStart="true"
-                android:text="url" />
+                android:layout_alignParentStart="true" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="archive config"
+                android:id="@+id/archiveConfigButton"
+                android:layout_below="@+id/uploadConfigButton"
+                android:layout_alignParentStart="true" />
 
             <ExpandableListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/configExpandableListView"
                 android:layout_gravity="center_horizontal"
-                android:layout_below="@+id/urlEditText" />
+                android:layout_below="@+id/archiveConfigButton" />
+
 
 
 

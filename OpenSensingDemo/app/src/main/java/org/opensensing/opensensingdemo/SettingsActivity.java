@@ -1,6 +1,7 @@
 package org.opensensing.opensensingdemo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,7 +38,7 @@ public class SettingsActivity extends Activity implements Observer {
     private MyExpandableListAdapter adapter;
     private Button saveConfigButton;
     private Boolean probeHasBeenToggled;
-    private EditText urlEditText;
+    private Button uploadConfigButton;
 
     private int expandedGroup;
 
@@ -52,7 +53,7 @@ public class SettingsActivity extends Activity implements Observer {
         probeHasBeenToggled = false;
         expandedGroup = -1;
 
-        localFunfManager = new LocalFunfManager(this);
+        localFunfManager = LocalFunfManager.getLocalFunfManager(this);
         localFunfManager.addObserver(this);
         localFunfManager.start();
 
@@ -70,7 +71,14 @@ public class SettingsActivity extends Activity implements Observer {
         configExpandableListView = (ExpandableListView) findViewById(R.id.configExpandableListView);
         configExpandableListView.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
 
-        urlEditText = (EditText) findViewById(R.id.urlEditText);
+        uploadConfigButton = (Button) findViewById(R.id.uploadConfigButton);
+        uploadConfigButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, UploadConfigDetails.class);
+                SettingsActivity.this.startActivity(intent);
+            }
+        });
 
         initUI();
 
@@ -137,20 +145,6 @@ public class SettingsActivity extends Activity implements Observer {
         if (probeHasBeenToggled) this.saveConfigButton.setEnabled(true);
         else this.saveConfigButton.setEnabled(false);
 
-        String url = "";
-
-        try {
-            url = localFunfManager.getCurrentPipelineConfig().get("upload").getAsJsonObject().get("url").toString();
-        } catch (java.lang.NullPointerException e) {
-        }
-        url = url.replace("\"","");
-        urlEditText.setText(url);
-        urlEditText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                probeToggled();
-            }
-        });
 
         groups = new SparseArray<Group>();
 
@@ -285,17 +279,8 @@ public class SettingsActivity extends Activity implements Observer {
 
         }
 
-        //TODO include the entire config of the upload
-        //TODO do some validation and enhancement of the url
-        //TODO test if url is good
-        JsonObject requestedUploadConfig = new JsonObject();
-        String url =  urlEditText.getText().toString();
-        if (!url.startsWith("http")) url = "http://" + url;
-        requestedUploadConfig.addProperty("url",url);
-
         JsonObject currentPipelineConfig = localFunfManager.getCurrentPipelineConfig();
         currentPipelineConfig.add("data", requestedConfig);
-        currentPipelineConfig.add("upload", requestedUploadConfig);
 
         Log.i(MainActivity.TAG, localFunfManager.getCurrentPipelineConfig().toString());
         Log.i(MainActivity.TAG, ".... " + currentPipelineConfig.toString());

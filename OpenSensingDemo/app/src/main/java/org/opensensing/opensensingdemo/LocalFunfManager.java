@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,6 +35,13 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     public static final String REMOTE_PIPELINE_NAME = "remote_pipeline";
     public static final String ERROR_PIPELINE_NAME = "error_pipeline";
 
+    private static LocalFunfManager localFunfManager = null;
+
+
+    public static LocalFunfManager getLocalFunfManager(Context context) {
+        localFunfManager = new LocalFunfManager(context);
+        return localFunfManager;
+    }
 
     public LocalFunfManager(Context context) {
         this.context = context;
@@ -51,7 +59,6 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
             public void onServiceDisconnected(ComponentName name) {
                 funfManager = null;
             }
-
 
         };
 
@@ -162,6 +169,41 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     private void updateUI() {
         setChanged();
         notifyObservers();
+    }
+
+    public boolean isWifiOnlyUploadEnabled() {
+        boolean wifiOnly = false;
+        try {
+            wifiOnly = getCurrentPipelineConfig().get("upload").getAsJsonObject().get("wifiOnly").getAsBoolean();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        return wifiOnly;
+    }
+
+    public String getUploadUrl() {
+        String url = "";
+        url = getCurrentPipelineConfig().get("upload").getAsJsonObject().get("url").getAsString();
+        return url;
+    }
+
+    public Double getUploadInterval() {
+        Double interval = -1.0;
+        try {
+            interval = getCurrentPipelineConfig().get("upload").getAsJsonObject().get("@schedule").getAsJsonObject().get("interval").getAsDouble();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+        if (interval == -1.0) {
+            try {
+                //TODO proper class discovery
+                interval = Class.forName("edu.mit.media.funf.storage.HttpArchive").getAnnotation(edu.mit.media.funf.Schedule.DefaultSchedule.class).interval();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return interval;
     }
 
     @Override

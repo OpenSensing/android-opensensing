@@ -43,7 +43,7 @@ public class MainActivity extends Activity implements Observer {
 
         isActive = false;
 
-        localFunfManager = new LocalFunfManager(this);
+        localFunfManager = LocalFunfManager.getLocalFunfManager(this);
         localFunfManager.addObserver(this);
 
         infoTextView = (TextView) findViewById(R.id.infoTextView);

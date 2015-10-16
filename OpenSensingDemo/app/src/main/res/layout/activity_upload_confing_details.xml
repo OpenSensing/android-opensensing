@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Upload Configuration"
+        android:id="@+id/uploadConfigTextView"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Configuration of data upload"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="URL"
+            android:id="@+id/uploadConfigURLTextView"
+            android:layout_alignParentStart="true" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/uploadConfigURLEditText"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_below="@+id/uploadConfigURLTextView"
+            android:layout_marginLeft="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="interval"
+            android:id="@+id/uploadConfigIntervalTextView"
+            android:layout_below="@+id/uploadConfigURLEditText"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/uploadConfigIntervalEditText"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_alignLeft="@+id/uploadConfigURLEditText"
+            android:layout_below="@+id/uploadConfigIntervalTextView"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="wifi only"
+            android:id="@+id/uploadConfigWifiOnlyTextView"
+            android:layout_below="@+id/uploadConfigIntervalEditText"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="10dp"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/uploadConfigWifiOnlySwitch"
+            android:layout_below="@+id/uploadConfigWifiOnlyTextView"
+            android:layout_alignLeft="@+id/uploadConfigIntervalEditText" />
+
+
+        </RelativeLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="save"
+        android:id="@+id/uploadConfigSaveDetailsButton"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="right" />
+
+
+</LinearLayout>
