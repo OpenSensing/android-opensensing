@@ -3,7 +3,9 @@
 
     <string name="action_settings">Settings</string>
     <string name="action_auth">Link to openPDS</string>
+    <string name="action_geofences">GeoFences</string>
     <string name="preference_file_key">org.opensensing.PREFERENCES</string>
     <string name="version">0.0.1</string>
     <integer name="notification_id">1987</integer>
+    <integer name="notification_status_id">1969</integer>
 </resources>

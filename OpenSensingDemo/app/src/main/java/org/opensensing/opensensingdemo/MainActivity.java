@@ -98,7 +98,6 @@ public class MainActivity extends Activity implements Observer {
 
         localFunfManager.start();
 
-
     }
 
     protected void onResume() {
@@ -140,6 +139,11 @@ public class MainActivity extends Activity implements Observer {
             startActivity(intent);
             return true;
         }
+        if (id == R.id.action_geofences) {
+            Intent intent = new Intent(this, GeofencesActivity.class);
+            startActivity(intent);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -151,6 +155,7 @@ public class MainActivity extends Activity implements Observer {
     }
 
     private void updateUI() {
+        if (localFunfManager == null) return;
         enabledSwitch.setEnabled(true);
         ((TextView) findViewById(R.id.versionTextView)).setText("collector: " + getVersionName() + "\n" + "funf: " + localFunfManager.getFunfVersion());
         if (localFunfManager.collectionEnabled()) {

@@ -4,6 +4,24 @@
         {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
          "name":"local_pipeline",
          "version":1,
+          "geofence": {
+            "version": 2,
+            "minLocationAccuracy": 40,
+            "minLocationFreshness": 2,
+            "timeWindow": 10,
+            "fences": [
+                {
+                    "latitude": 37.4036485,
+                    "longitude": -122.0333346,
+                    "radius": 300
+                },
+                {
+                    "latitude": 37.422029,
+                    "longitude": -122.084050,
+                    "radius": 500
+                }
+            ]
+          },
           "archive": {
 		    "@schedule": {"interval": 3600},
             "compress": true,

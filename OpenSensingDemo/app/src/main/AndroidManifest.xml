@@ -10,6 +10,9 @@
         android:theme="@style/AppTheme"
         tools:replace="android:label"
         >
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -42,6 +45,11 @@
             >
         </activity>
         <activity
+            android:name=".GeofencesActivity"
+            android:screenOrientation="portrait"
+            >
+        </activity>
+        <activity
         android:name="com.dropbox.client2.android.AuthActivity"
         android:launchMode="singleTask"
         android:configChanges="orientation|keyboard">
@@ -59,7 +67,7 @@
 
         <service android:name="edu.mit.media.funf.FunfManager">
            <meta-data android:name="local_pipeline" android:value="@string/local_pipeline"/>
-            <meta-data android:name="remote_pipeline" android:value="@string/remote_pipeline"/>
+            <!-- <meta-data android:name="remote_pipeline" android:value="@string/remote_pipeline"/> !-->
         </service>
         <receiver android:name="edu.mit.media.funf.Launcher" android:enabled="true">
             <intent-filter>
@@ -75,6 +83,13 @@
                 <action android:name="org.opensensing.opensensingdemo.AUTHENTICATION_ERROR" />
             </intent-filter>
         </receiver>
+        <receiver android:name="org.opensensing.opensensingdemo.DataCollectionStatusBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="org.opensensing.opensensingdemo.DATA_COLLECTION_STATUS" />
+            </intent-filter>
+        </receiver>
+
+
 
     </application>
     <!-- Launching -->
