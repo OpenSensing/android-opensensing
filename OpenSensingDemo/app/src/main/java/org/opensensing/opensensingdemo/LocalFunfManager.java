@@ -52,6 +52,11 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 funfManager = ((FunfManager.LocalBinder) service).getManager();
+
+                if (funfManager.isEnabled(LOCAL_PIPELINE_NAME) && funfManager.isEnabled(REMOTE_PIPELINE_NAME)) {
+                    reloadPipeline();
+                }
+
                 updateUI();
             }
 
@@ -262,5 +267,9 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
         }
         if (funfManager == null) return;
         funfManager.setAuthToken(url, token);
+    }
+
+    public List<JsonElement> getFences() {
+        return getCurrentPipeline().getFences();
     }
 }
