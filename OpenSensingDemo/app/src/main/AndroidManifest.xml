@@ -54,8 +54,8 @@
         android:launchMode="singleTask"
         android:configChanges="orientation|keyboard">
         <intent-filter>
-            <!-- Change this to be db- followed by your app key -->
-            <data android:scheme="db-4sx3l8x35hsznof" />
+            <!-- Change this to be db- followed by your dropbox app key -->
+            <data android:scheme="db-" />
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE"/>
             <category android:name="android.intent.category.DEFAULT" />

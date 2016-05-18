@@ -237,25 +237,8 @@ public class LocalFunfManager extends Observable implements Probe.DataListener {
     }
 
     private String getDataInfo() {
-        SQLiteDatabase db = getCurrentPipeline().getDb();
-        Cursor mcursor = db.rawQuery("SELECT name FROM " + NameValueDatabaseHelper.DATA_TABLE.name, null);
-        mcursor.moveToFirst();
-
-        HashMap<String, Integer> dataCount = new HashMap<String, Integer>();
-
-        while (!mcursor.isAfterLast()) {
-            String name = mcursor.getString(0);
-            if (dataCount.containsKey(name)) {
-                dataCount.put(name, dataCount.get(name) +1);
-            }
-            else {
-                dataCount.put(name, 1);
-            }
-            mcursor.moveToNext();
-        }
-
-        mcursor.close();
-        return dataCount.toString();
+        //getDb() for both json and sqlite not implemented in funf-core yet.
+        return "";
     }
 
     public void setAuthToken(String token) {

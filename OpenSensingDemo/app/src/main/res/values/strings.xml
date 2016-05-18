@@ -8,4 +8,7 @@
     <string name="version">0.0.1</string>
     <integer name="notification_id">1987</integer>
     <integer name="notification_status_id">1969</integer>
+    <string name="google_maps_key"></string>
+    <string name="DROPBOX_APP_KEY"></string>
+    <string name="DROPBOX_APP_SECRET"></string>
 </resources>
